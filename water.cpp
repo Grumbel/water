@@ -14,6 +14,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <vector>
 #include <math.h>
 #include <iostream>
 #include <GL/glut.h>
@@ -32,10 +33,11 @@ struct Normal {
 double wave_speed = .1;
 bool d3 = false;
 int iter = 1;
-#define WATER_LEN 128
-double** water1;
-double** water;
-struct Normal** normals;
+const int WATER_LEN = 128;
+
+std::vector<std::vector<double> > water1;
+std::vector<std::vector<double> > water;
+std::vector<std::vector<Normal> > normals;
 int active = 0;
 bool running = true;
 int drag = 0;
@@ -109,60 +111,62 @@ void mouse_func (int button, int button_state, int x, int y)
 void idle_func ()
 {
   if (!running)
-    {
-      static double t = 0.0f;
+  {
+    static double t = 0.0f;
   
-      t += .1f;
-      /*
-        for(int j = 0; j < 5; ++j)
-        for(int i = 0; i < 5; ++i)
-        {
-        water[i + 50][50+j]  += .1*(sin(.5*t)*25);
-        water1[i + 50][50+j] += .1*(sin(.5*t)*25);
-        }
-      */
-      /*
-        int i = 50;
-        int j = 50;
-        int size = 10;
-        if (int(t*10) % 100 == 0)
-        {
-        for(int y = -size; y <  size; ++y)
-        for(int x = -size; x < size; ++x)
-        {
-        double r = sqrt(x*x + y*y);
-        double q = size*size - r*r;
-        if (q > 0 
-        && (i+x < WATER_LEN-1) && (i+x > 1)
-        && (j+y < WATER_LEN-1) && (j+y > 1))
-        {
-        water1 [i+x][j+y] -= sqrt(q)*.3;
-        //water1[i+x][j+y] = water [i+x][j+y];
-        }
-        }
-        }
-      */
-      for (int k = 0; k < iter; ++k)
-        {
+    t += .1f;
+    /*
+      for(int j = 0; j < 5; ++j)
+      for(int i = 0; i < 5; ++i)
+      {
+      water[i + 50][50+j]  += .1*(sin(.5*t)*25);
+      water1[i + 50][50+j] += .1*(sin(.5*t)*25);
+      }
+    */
+    /*
+      int i = 50;
+      int j = 50;
+      int size = 10;
+      if (int(t*10) % 100 == 0)
+      {
+      for(int y = -size; y <  size; ++y)
+      for(int x = -size; x < size; ++x)
+      {
+      double r = sqrt(x*x + y*y);
+      double q = size*size - r*r;
+      if (q > 0 
+      && (i+x < WATER_LEN-1) && (i+x > 1)
+      && (j+y < WATER_LEN-1) && (j+y > 1))
+      {
+      water1 [i+x][j+y] -= sqrt(q)*.3;
+      //water1[i+x][j+y] = water [i+x][j+y];
+      }
+      }
+      }
+    */
+    for (int k = 0; k < iter; ++k)
+    {
 
-          double c = 1.0f;
-          double h = 1.0f;
-          double dt = 0.1f;
+      double c = 1.0f;
+      double h = 1.0f;
+      double dt = 0.1f;
 
-          double A = c*dt/h * c*dt/h;
-          double B = 2 - 4*A;   // use 2*A for 2d
+      double A = c*dt/h * c*dt/h;
+      double B = 2 - 4*A;   // use 2*A for 2d
 
-          for(int j = 1; j < WATER_LEN - 1; ++j)
-            for(int i = 1; i < WATER_LEN - 1; ++i)
-              {
-                water1[i][j] = A*(water[i-1][j-1] + water[i+1][j-1] + water[i-1][j+1] + water[i+1][j+1])
-                  + B*water[i][j] - water1[i][j];
-                water1[i][j] *= .9999f;
-              }
-
-          std::swap(water, water1);
+      for(int j = 1; j < WATER_LEN - 1; ++j)
+      {
+        for(int i = 1; i < WATER_LEN - 1; ++i)
+        {
+          water1[i][j] = A*(water[i-1][j-1] + water[i+1][j-1] + water[i-1][j+1] + water[i+1][j+1])
+            + B*water[i][j] - water1[i][j];
+          water1[i][j] *= .9999f;
         }
+      }
+
+      std::swap(water, water1);
     }
+  }
 
   display_func();
   
@@ -303,11 +307,7 @@ getFaceNormal(float *norm,float pointa[3],float pointb[3],float pointc[3])
 
 void display_func ()
 {
-  double** dwater;
-  if (last)
-    dwater = water;
-  else
-    dwater = water1;
+  std::vector<std::vector<double> >& dwater = last ? water : water1;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -451,27 +451,27 @@ void reshape_func(int w, int h)
 }
 
 int main(int argc, char** argv)
-{
-  water  = new double*[WATER_LEN];
-  water1 = new double*[WATER_LEN];
-  normals = new Normal*[WATER_LEN];
-  
+{ 
+  water1.resize(WATER_LEN);
+  water.resize(WATER_LEN);
+  normals.resize(WATER_LEN);
+
   for(int i = 0; i < WATER_LEN; ++i)
+  {
+    water1[i].resize(WATER_LEN);
+    water[i].resize(WATER_LEN);
+    normals[i].resize(WATER_LEN);
+
+    for(int j = 0; j < WATER_LEN; ++j)
     {
-      water[i]  = new double[WATER_LEN];
-      water1[i] = new double[WATER_LEN];
-      normals[i] = new Normal[WATER_LEN];
+      water[i][j] = 0;
+      water1[i][j] = 0;
 
-      for(int j = 0; j < WATER_LEN; ++j)
-        {
-          water[i][j] = 0;
-          water1[i][j] = 0;
-
-          normals[i][j].nx = 0;
-          normals[i][j].ny = 0;
-          normals[i][j].nz = 0;
-        }
+      normals[i][j].nx = 0;
+      normals[i][j].ny = 0;
+      normals[i][j].nz = 0;
     }
+  }
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
