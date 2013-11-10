@@ -1,3 +1,4 @@
+#include <math.h>
 #include <iostream>
 #include <GL/glut.h>
 
@@ -12,9 +13,10 @@ struct Normal {
   float nz;
 };
 
+double wave_speed = .1;
 bool d3 = false;
 int iter = 1;
-#define WATER_LEN 100
+#define WATER_LEN 128
 double** water1;
 double** water;
 struct Normal** normals;
@@ -23,6 +25,8 @@ bool running = true;
 int drag = 0;
 float rot_x = 0;
 float rot_y = 0;
+
+#define PI 3.1415927
 
 bool flip = true;
 
@@ -42,23 +46,23 @@ void mouse_func (int button, int button_state, int x, int y)
     {
       std::cout << "Splash1" << std::endl;
       int size = 10;
-      for(int y = -size; y <  size; ++y)
+      for(int y = -size*2; y <  size*2; ++y)
         for(int x = -size; x < size; ++x)
           {
-            double r = sqrt(x*x + y*y);
+            /*double r = sqrt(x*x + y*y);
             double q = size*size - r*r;
 
             double x1 = x + .1;
             double y1 = y + .1;
             double r1 = sqrt(x1*x1 + y1*y1);
             double q1 = size*size - r1*r1;
-
-            if (q > 0 && q1 > 0
-                && (i+x < WATER_LEN-1) && (i+x > 1)
+            */
+            if (/*q > 0 && q1 > 0
+                  &&*/ (i+x < WATER_LEN-1) && (i+x > 1)
                 && (j+y < WATER_LEN-1) && (j+y > 1))
               {
-                water [i+x][j+y] -= sqrt(q)*.3;
-                water1[i+x][j+y] -= sqrt(q1)*.3;//= water [i+x][j+y]*-0.4f;
+                water [i+x][j+y] -= sin(double(x)/size * PI*2)*3;
+                water1[i+x][j+y] -= sin((double(x)+wave_speed)/size * PI*2)*3;
               }
           }
     }
@@ -168,6 +172,14 @@ void keyboard_func (unsigned char key, int x, int y)
       
     case 'a':
       d3 = !d3;
+      break;
+
+    case '1':
+      wave_speed += -1;
+      break;
+
+    case '2':
+      wave_speed += 1;
       break;
 
     case ' ':
@@ -356,7 +368,7 @@ void display_func ()
           if (1)
             {
               glColor3d(0.5, 0.5, 1);
-              glBegin (GL_LINES);
+              glBegin (GL_TRIANGLES);
               float p1[] = { i, dwater[i][j]*stretch, j };
               float p2[] = { i, dwater[i][j-step]*stretch, (j-step) };
               float p3[] = { (i-step), dwater[i-step][j-step]*stretch, (j-step) };
