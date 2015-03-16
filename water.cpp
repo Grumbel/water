@@ -1,18 +1,18 @@
-//  Simple Water Wave Effect in OpenGL
-//  Copyright (C) 2004 Ingo Ruhnke <grumbel@gmail.com>
+// Simple Water Wave Effect in OpenGL
+// Copyright (C) 2004 Ingo Ruhnke <grumbel@gmail.com>
 //
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-//  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include <math.h>
@@ -52,7 +52,7 @@ void display_func ();
 
 void mouse_func (int button, int button_state, int x, int y)
 {
-  std::cout << "MouseButton: " << button << " " << button_state << " " 
+  std::cout << "MouseButton: " << button << " " << button_state << " "
          << x << " " << y << std::endl;
   if (button == 2)
     active = !button_state;
@@ -97,7 +97,7 @@ void mouse_func (int button, int button_state, int x, int y)
       for(int x = 0; x < 20; ++x)
       for(int y = 0; y < 20; ++y)
         {
-          float power = -(100 - ((x-10)*(x-10)))/5.0 + -(100 - ((y-10)*(y-10)))/5.0;; 
+          float power = -(100 - ((x-10)*(x-10)))/5.0 + -(100 - ((y-10)*(y-10)))/5.0;;
           water1[i+x][j+y]  = power*.3;
           water[i+x][j+y]   = power*.3;
           }*/
@@ -113,7 +113,7 @@ void idle_func ()
   if (!running)
   {
     static double t = 0.0f;
-  
+
     t += .1f;
     /*
       for(int j = 0; j < 5; ++j)
@@ -134,7 +134,7 @@ void idle_func ()
       {
       double r = sqrt(x*x + y*y);
       double q = size*size - r*r;
-      if (q > 0 
+      if (q > 0
       && (i+x < WATER_LEN-1) && (i+x > 1)
       && (j+y < WATER_LEN-1) && (j+y > 1))
       {
@@ -169,7 +169,7 @@ void idle_func ()
   }
 
   display_func();
-  
+
 }
 
 void keyboard_func (unsigned char key, int x, int y)
@@ -189,7 +189,7 @@ void keyboard_func (unsigned char key, int x, int y)
     case 'o':
       last = !last;
       break;
-      
+
     case 'a':
       d3 = !d3;
       break;
@@ -270,13 +270,13 @@ void mouse_motion_func (int x, int y)
 }
 
 void crossProduct(float *c,float a[3], float b[3])  //finds the cross product of two vectors
-{  
+{
   c[0]=a[1]*b[2] - b[1]*a[2];
   c[1]=a[2]*b[0] - b[2]*a[0];
   c[2]=a[0]*b[1] - b[0]*a[1];
 }
 
-void 
+void
 getFaceNormal(float *norm,float pointa[3],float pointb[3],float pointc[3])
 {
   float vect[2][3];
@@ -286,7 +286,7 @@ getFaceNormal(float *norm,float pointa[3],float pointb[3],float pointc[3])
   for (a=0;a<3;++a)
     {
       point[0][a]=pointa[a];    //copies points into point[][]
-      point[1][a]=pointb[a]; 
+      point[1][a]=pointb[a];
       point[2][a]=pointc[a];
     }
 
@@ -295,7 +295,7 @@ getFaceNormal(float *norm,float pointa[3],float pointb[3],float pointc[3])
     {                        //and point[0] to point[2]
       for (b=0;b<3;++b)
         {
-          vect[a][b]=point[2-a][b]-point[0][b];      
+          vect[a][b]=point[2-a][b]-point[0][b];
         }
     }
 
@@ -312,7 +312,7 @@ void display_func ()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glLoadIdentity();
-  
+
   if (d3)
     flip = !flip;
 
@@ -324,9 +324,9 @@ void display_func ()
 
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
-  
+
   GLfloat position[] = { 0, -500.0, 555.0, 1.0 };
-  
+
   /*  GLfloat position2[] = { 0.0, 0.0, 0.0, 0.0 };
       glLightfv(GL_LIGHT1, GL_POSITION, position);*/
 
@@ -389,7 +389,7 @@ void display_func ()
               float p2[] = { i, dwater[i][j-step]*stretch, (j-step) };
               float p3[] = { (i-step), dwater[i-step][j-step]*stretch, (j-step) };
               float p4[] = { (i-step), dwater[i-step][j]*stretch, j };
-              
+
               glNormal3f(normals[i][j].nx, normals[i][j].ny, normals[i][j].nz);
               glVertex3fv(p1);
 
@@ -421,7 +421,7 @@ void display_func ()
               glBegin (GL_LINES);
               glVertex3fv (p1);
               glVertex3fv (p2);
-              glEnd ();  
+              glEnd ();
             }
         }
     }
@@ -436,7 +436,7 @@ void reshape_func(int w, int h)
   glViewport (0,0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  
+
   gluPerspective(80,  // fov
                  (GLfloat)w/(GLfloat)h, // aspect
                  5, 10000); // zNear, zFar
@@ -451,7 +451,7 @@ void reshape_func(int w, int h)
 }
 
 int main(int argc, char** argv)
-{ 
+{
   water1.resize(WATER_LEN);
   water.resize(WATER_LEN);
   normals.resize(WATER_LEN);
@@ -498,7 +498,7 @@ int main(int argc, char** argv)
 
   //  glEnable(GL_LINE_SMOOTH);
 
-  glutMainLoop(); 
+  glutMainLoop();
 }
 
 /* EOF */
