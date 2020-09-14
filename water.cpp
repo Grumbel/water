@@ -35,8 +35,8 @@ bool d3 = false;
 int iter = 1;
 const int WATER_LEN = 128;
 
-std::vector<std::vector<double> > water1;
-std::vector<std::vector<double> > water;
+std::vector<std::vector<float> > water1;
+std::vector<std::vector<float> > water;
 std::vector<std::vector<Normal> > normals;
 int active = 0;
 bool running = true;
@@ -307,7 +307,7 @@ getFaceNormal(float *norm,float pointa[3],float pointb[3],float pointc[3])
 
 void display_func ()
 {
-  std::vector<std::vector<double> >& dwater = last ? water : water1;
+  std::vector<std::vector<float> >& dwater = last ? water : water1;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -365,9 +365,9 @@ void display_func ()
     {
       for(int i = step; i < WATER_LEN; i+=step)
         {
-          float p1[] = { i, stretch*dwater[i][j], j };
-          float p3[] = { i-step, stretch*dwater[i-step][j], j };
-          float p2[] = { i, stretch*dwater[i][j-step], j-step };
+          float p1[] = { static_cast<float>(i), stretch * dwater[i][j], static_cast<float>(j) };
+          float p3[] = { static_cast<float>(i - step), stretch*dwater[i-step][j], static_cast<float>(j) };
+          float p2[] = { static_cast<float>(i), stretch*dwater[i][j-step], static_cast<float>(j - step) };
           float n[3] = { 0, 0, 1 };
 
           getFaceNormal(n, p1, p2, p3);
@@ -385,10 +385,10 @@ void display_func ()
             {
               glColor3d(0.5, 0.5, 1);
               glBegin (GL_TRIANGLES);
-              float p1[] = { i, dwater[i][j]*stretch, j };
-              float p2[] = { i, dwater[i][j-step]*stretch, (j-step) };
-              float p3[] = { (i-step), dwater[i-step][j-step]*stretch, (j-step) };
-              float p4[] = { (i-step), dwater[i-step][j]*stretch, j };
+              float p1[] = { static_cast<float>(i), dwater[i][j]*stretch, static_cast<float>(j) };
+              float p2[] = { static_cast<float>(i), dwater[i][j-step]*stretch, static_cast<float>(j-step) };
+              float p3[] = { static_cast<float>(i-step), dwater[i-step][j-step]*stretch, static_cast<float>(j-step) };
+              float p4[] = { static_cast<float>(i-step), dwater[i-step][j]*stretch, static_cast<float>(j) };
 
               glNormal3f(normals[i][j].nx, normals[i][j].ny, normals[i][j].nz);
               glVertex3fv(p1);
@@ -414,8 +414,8 @@ void display_func ()
             }
           else
             {
-              float p1[] = { i, dwater[i][j]*stretch, j };
-              float p2[] = { i, dwater[i][j-step]*stretch, (j-step) };
+              float p1[] = { static_cast<float>(i), dwater[i][j]*stretch, static_cast<float>(j) };
+              float p2[] = { static_cast<float>(i), dwater[i][j-step]*stretch, static_cast<float>(j - step) };
 
               glColor3d(1.0, 1.0, 1);
               glBegin (GL_LINES);
